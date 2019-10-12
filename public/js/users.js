@@ -1,8 +1,24 @@
 'use strict';
 
-let pagePag;
+//let pagePag;
 
-
+$(document).ready(function() {
+    $.ajax(
+        '/',
+        {
+            success: function(data) {
+                alert('AJAX call was successful!');
+                alert('Data from the server' + data);
+            },
+            error: function() {
+                alert('There was some error performing the AJAX call!');
+            }
+        }
+    );
+  //  $('#guestbook').DataTable( {
+  //      "ajax": '../ajax/data/arrays.txt'
+  //  } );
+} );
 
 // UserTable = document.querySelectorAll('.js-user-edit');
 //

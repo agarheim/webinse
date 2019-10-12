@@ -42,6 +42,13 @@ class UsersWController extends AbstractController
            {   $this->add_post( $chatF, $repository, $entityManager);
                return $this->redirectToRoute('default');
            }
+        if($request->isXmlHttpRequest())
+        {
+            echo 'asdfasdfasdfsadfasdf';
+        }
+        else
+        {echo 'фигушки';}
+
         $chat = $repository->findAll();
         // Paginate the results of the query
         $appointments = $paginator->paginate(
@@ -58,14 +65,21 @@ class UsersWController extends AbstractController
             'appointments' => $appointments,
         ]);
     }
+    /**
+     * @Route("loadall", name="load_all")
+     */
+    public function loadAll(UsersWRepository $repository)
+    {
+        $chat = $repository->findAll();
 
+    }
     /**
      * @Route("submitpost", name="submit_post")
      */
     public function ajax_post($request, $chatF ){
        // $form_data = $request->get('task');
 
-       //eturn new JsonResponse($form_data);
+       //return new JsonResponse($form_data);
     }
       public function add_post( $chatF, $repository, $entityManager)
       {
