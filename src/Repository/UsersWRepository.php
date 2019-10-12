@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\UsersW;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method UsersW|null find($id, $lockMode = null, $lockVersion = null)
@@ -46,4 +48,16 @@ class UsersWRepository extends ServiceEntityRepository
         ;
     }
 
+    public function paginator(EntityManagerInterface $entityManager)
+    {
+
+        //$dql = "SELECT p, c FROM BlogPost p JOIN p.comments c";
+        $query = $entityManager->createQueryBuilder('u')
+            ->setFirstResult(0)
+            ->setMaxResults(100);
+
+        $paginator = new Paginator($query, $fetchJoinCollection = true);
+
+       return count($paginator);
+    }
 }
