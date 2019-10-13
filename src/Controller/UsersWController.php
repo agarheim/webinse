@@ -8,11 +8,16 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 
 class UsersWController extends AbstractController
@@ -42,12 +47,12 @@ class UsersWController extends AbstractController
            {   $this->add_post( $chatF, $repository, $entityManager);
                return $this->redirectToRoute('default');
            }
-        if($request->isXmlHttpRequest())
-        {
-            echo 'asdfasdfasdfsadfasdf';
-        }
-        else
-        {echo 'фигушки';}
+//        if($request->isXmlHttpRequest())
+//        {
+//            echo 'asdfasdfasdfsadfasdf';
+//        }
+//        else
+//        {echo 'фигушки';}
 
         $chat = $repository->findAll();
         // Paginate the results of the query
@@ -68,19 +73,21 @@ class UsersWController extends AbstractController
     /**
      * @Route("loadall", name="load_all")
      */
-    public function loadAll(UsersWRepository $repository)
+    public function loadAll(UsersWRepository $usersWRepository, SerializerInterface $serializer)
     {
-        $chat = $repository->findAll();
 
-    }
-    /**
-     * @Route("submitpost", name="submit_post")
-     */
-    public function ajax_post($request, $chatF ){
-       // $form_data = $request->get('task');
+        $chat = $usersWRepository->findAll();
 
-       //return new JsonResponse($form_data);
+        $jsonContent = $serializer->serialize($chat, 'json');
+        $response = JsonResponse::fromJsonString($jsonContent);
+//var_dump($jsonContent);
+        return   $response;
+//        return $this->render('/guestbook/_tableguest.html.twig', [
+//            'appointments' => $chat,
+//        ]);
     }
+
+
       public function add_post( $chatF, $repository, $entityManager)
       {
           if(!$repository->addNewField($chatF->getEmail())) {

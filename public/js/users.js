@@ -1,24 +1,51 @@
 'use strict';
 
-//let pagePag;
+let pagePag, parsed;
+
+//fetch('loadall')
+//    .then((response) => {
+ //       return response.json();
+ //   })
+ //   .then((body) => {
+        $('#guestbook').DataTable( {
+         //    "ajax": body
+         } );
+      // console.log(body);
+     ///  });
 
 $(document).ready(function() {
-    $.ajax(
-        '/',
-        {
-            success: function(data) {
-                alert('AJAX call was successful!');
-                alert('Data from the server' + data);
-            },
-            error: function() {
-                alert('There was some error performing the AJAX call!');
-            }
-        }
-    );
-  //  $('#guestbook').DataTable( {
-  //      "ajax": '../ajax/data/arrays.txt'
-  //  } );
+    $('#example').DataTable();
+    $('#guestbook').DataTable( {
+        //    "ajax": body
+    } );
 } );
+// .done(function (data)
+//                     {alert('dfdsf');
+//                         $('#guestbook').DataTable( {"ajax": data}
+//                     )});
+//$('#guestbook').DataTable( {
+//document.addEventListener("DOMContentLoaded", () => {
+//    document.getElementById('guestbody').innerHTML = $.ajax({
+//         url: "loadall",
+//         async: false
+//     }).responseText;
+//    $('#guestbook').DataTable( {
+ //     $.ajax({
+  //       url: "loadall",
+  //       async: false
+  //   }).responseText});
+   //     "ajax": '../ajax/data/arrays.txt'
+  //  } );
+
+//document.addEventListener("DOMContentLoaded", () => {
+
+     // $('#guestbook').DataTable( {
+     //     "ajax": pagePag
+     // } );
+//} );
+
+
+
 
 // UserTable = document.querySelectorAll('.js-user-edit');
 //
