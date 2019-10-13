@@ -1,80 +1,15 @@
 'use strict';
 
-let pagePag, parsed;
-
-//fetch('loadall')
-//    .then((response) => {
- //       return response.json();
- //   })
- //   .then((body) => {
-        $('#guestbook').DataTable( {
-         //    "ajax": body
-         } );
-      // console.log(body);
-     ///  });
-
-$(document).ready(function() {
-    $('#example').DataTable();
-    $('#guestbook').DataTable( {
-        //    "ajax": body
-    } );
-} );
-// .done(function (data)
-//                     {alert('dfdsf');
-//                         $('#guestbook').DataTable( {"ajax": data}
-//                     )});
-//$('#guestbook').DataTable( {
-//document.addEventListener("DOMContentLoaded", () => {
-//    document.getElementById('guestbody').innerHTML = $.ajax({
-//         url: "loadall",
-//         async: false
-//     }).responseText;
-//    $('#guestbook').DataTable( {
- //     $.ajax({
-  //       url: "loadall",
-  //       async: false
-  //   }).responseText});
-   //     "ajax": '../ajax/data/arrays.txt'
-  //  } );
-
-//document.addEventListener("DOMContentLoaded", () => {
-
-     // $('#guestbook').DataTable( {
-     //     "ajax": pagePag
-     // } );
-//} );
-
-
-
-
-// UserTable = document.querySelectorAll('.js-user-edit');
-//
-// UserTable.forEach((button) => {
-//     button.addEventListener('click', (event) => {
-//         event.preventDefault();
-//         fetch(button.href, {
-//             headers: {
-//                 'X-Requested-With': 'XMLHttpRequest'
-//             }
-//         })
-//             .then((response) => {
-//                 return response.text();
-//             })
-//             .then((body) => {
-//                 document.getElementById('myModal').innerHTML = body;
-//                 modal.style.display = "block";
-//             })
-//     });
-// });
-//
+let modal, mess;
 //  // Get the modal
-//  var modal = document.getElementById("myModal");
+ modal=document.getElementById("myModal");
+// let modalcontent = document.getElementById("modal-content");
 //
 // // Get the button that opens the modal
-// var btn = document.getElementById("myBtn");
+//var btn = document.getElementById("myBtn");
 //
 // // Get the <span> element that closes the modal
-// var span = document.getElementsByClassName("close")[0];
+var span = document.getElementsByClassName("close")[0];
 //
 // // When the user clicks on the button, open the modal
 // btn.onclick = function() {
@@ -82,13 +17,84 @@ $(document).ready(function() {
 // }
 //
 // // When the user clicks on <span> (x), close the modal
-// span.onclick = function() {
-//     modal.style.display = "none";
-// }
+span.onclick = function() {
+    modal.style.display = "none";
+}
 //
 // // When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//     if (event.target == modal) {
-//         modal.style.display = "none";
-//     }
-// }
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+//fetch('loadall')
+//    .then((response) => {
+ //       return response.json();
+ //   })
+ //   .then((body) => {
+
+      // console.log(body);
+     ///  });
+
+$(document).ready(function() {
+   $('#guestbook').DataTable(
+        { "scrollY": "220px",
+            "pageLength": 5,
+            "lengthMenu": [ 5, 25, 50, 75, 100 ],
+            "searching": false,
+            "columnDefs": [
+                {
+                    "targets": [ 1 ],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [ 4 ],
+                    "visible": false,
+                    "searchable": false
+                }
+            ],
+          },
+    // {
+    //     responsive: {
+    //         details: {
+    //             renderer: function ( api, rowIdx, columns ) {
+    //                 var data = $.map( columns, function ( col, i ) {
+    //                     return col.hidden ?
+    //                         '<tr data-dt-row="'+col.rowIndex+'" data-dt-column="'+col.columnIndex+'">'+
+    //                         '<td>'+col.title+':'+'</td> '+
+    //                         '<td>'+col.data+'</td>'+
+    //                         '</tr>' :
+    //                         '';
+    //                 } ).join('');
+    //
+    //                 return data ?
+    //                     $('<table/>').append( data ) :
+    //                     false;
+    //             }
+    //         }
+    //     }
+      //}
+
+ );
+
+$ ('#guestbook'). on ('click', 'tbody tr', function () {
+        let table = $ ('#guestbook'). DataTable ();
+        let tr = $ ( this) .closest ('tr');
+        let row = table.row (tr);
+        mess='' ;
+    mess+='<p>First Name:'+row.data()[0]+'</p>'+
+    '<p>Home page:'+row.data()[1]+'</p>'+
+    '<p>email:'+row.data()[2]+'</p>'+
+    '<p>Date:'+row.data()[3]+'</p>'+
+        '<p>Text:'+row.data()[4]+'</p>';
+    document.getElementById("modal-content").innerHTML=mess;
+    document.getElementById("myModal").style.display = "block";
+    });
+
+
+
+});
+
+
+

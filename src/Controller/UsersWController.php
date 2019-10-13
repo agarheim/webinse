@@ -55,42 +55,15 @@ class UsersWController extends AbstractController
 //        {echo 'фигушки';}
 
         $chat = $repository->findAll();
-        // Paginate the results of the query
-        $appointments = $paginator->paginate(
-        // Doctrine Query, not results
-            $chat,
-            // Define the page parameter
-            $request->query->getInt('page', 1),
-            // Items per page
-            5
-        );
-
-        return $this->render('/guestbook/index.html.twig', [
+         return $this->render('/guestbook/index.html.twig', [
             'form' => $form->createView(),
-            'appointments' => $appointments,
+            'appointments' => $chat,
         ]);
     }
-    /**
-     * @Route("loadall", name="load_all")
-     */
-    public function loadAll(UsersWRepository $usersWRepository, SerializerInterface $serializer)
-    {
-
-        $chat = $usersWRepository->findAll();
-
-        $jsonContent = $serializer->serialize($chat, 'json');
-        $response = JsonResponse::fromJsonString($jsonContent);
-//var_dump($jsonContent);
-        return   $response;
-//        return $this->render('/guestbook/_tableguest.html.twig', [
-//            'appointments' => $chat,
-//        ]);
-    }
-
-
       public function add_post( $chatF, $repository, $entityManager)
       {
           if(!$repository->addNewField($chatF->getEmail())) {
+                  $chatF->setDateAdd (new \DateTime('now'));
                   $entityManager->persist($chatF);
                   $entityManager->flush();
            }

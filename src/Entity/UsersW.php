@@ -40,6 +40,11 @@ class UsersW
      */
     private $message;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateAdd;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +94,18 @@ class UsersW
     public function setMessage(string $message): self
     {
         $this->message = $message;
+
+        return $this;
+    }
+
+    public function getDateAdd(): ?\DateTimeInterface
+    {
+        return $this->dateAdd;
+    }
+
+    public function setDateAdd(\DateTimeInterface $dateAdd): self
+    {
+        $this->dateAdd = $dateAdd;
 
         return $this;
     }
