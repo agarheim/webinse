@@ -72,7 +72,10 @@ class UsersWController extends AbstractController
      */
     public function add_post(Request $request)
       {
-            //$user = new UsersW();
+            $user = new UsersW();
+          var_dump($request->get('request'));
+
+
 //             $user->setFirstName($_POST['firstName']);
 //             $user->setEmail($_POST['email']);
 //             $user->sethomePage($_POST['homepage']);
@@ -88,7 +91,7 @@ class UsersWController extends AbstractController
 
         return $this->render($this->render('/guestbook/_tableguest.html.twig', [
             'appointments' => $this->usersRepo->findAll(array('dateAdd' => 'DESC')),
-            'c'=> var_dump($request->request->get('add_user')),
+            'c'=>var_dump($request->query->get('firstName')),
             ]));
       }
     /**
