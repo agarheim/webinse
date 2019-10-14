@@ -8,74 +8,96 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
 
 class UsersWController extends AbstractController
 {
     /**
-     * @Route("/", name="default")
-     * @param UsersWRepository $repository
-     * @param Request $request
-     * @param EntityManagerInterface $entityManager
-     * @return RedirectResponse|Response
+     * @var EntityManagerInterface
      */
-    public function index(UsersWRepository $repository, Request $request,
-                          EntityManagerInterface $entityManager, PaginatorInterface $paginator)
+    private $entityManager;
+
+    /**
+     * @var UsersWRepository
+     */
+    private $usersRepo;
+
+
+    public function __construct(
+        EntityManagerInterface $entityManager, UsersWRepository $repository
+    ) {
+        $this->entityManager = $entityManager;
+        $this->usersRepo = $repository;
+    }
+
+    /**
+     * @Route("/", name="default")
+     * @param Request $request
+     */
+    public function index(Request $request)
     {
         $chatF= new UsersW();
-
         $form= $this->createForm(AddUserType::class,$chatF,[
                                                      'attr' => [
-                                                         'method' => 'POST',
+                                                         'method' => 'post',
                                                          'name' => 'addpost',
-                                                         'action' => ''
+                                                         'id' => 'formaddpost',
+                                                         'enctype'=> 'multipart/form-data',
+
                                                      ]
         ]);
         $form->add('save', SubmitType::class, ['label' => 'Add']);
         $form-> handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
-           {   $this->add_post( $chatF, $repository, $entityManager);
-               return $this->redirectToRoute('default');
+           {
+               $chatF->setDateAdd (new \DateTime('now'));
+              if(!$chatF->getEmail()) {
+                  $this->entityManager->persist($chatF);
+                  $this->entityManager->flush();
+                  return $this->redirectToRoute('default');
+              }
            }
-//        if($request->isXmlHttpRequest())
-//        {
-//            echo 'asdfasdfasdfsadfasdf';
-//        }
-//        else
-//        {echo 'фигушки';}
 
-        $chat = $repository->findAll();
+        $chat = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
          return $this->render('/guestbook/index.html.twig', [
             'form' => $form->createView(),
             'appointments' => $chat,
         ]);
     }
-      public function add_post( $chatF, $repository, $entityManager)
-      {
-          if(!$repository->addNewField($chatF->getEmail())) {
-                  $chatF->setDateAdd (new \DateTime('now'));
-                  $entityManager->persist($chatF);
-                  $entityManager->flush();
-           }
 
+    /**
+     * @Route("addpost", name="add_post")
+     */
+    public function add_post(Request $request)
+      {
+            //$user = new UsersW();
+//             $user->setFirstName($_POST['firstName']);
+//             $user->setEmail($_POST['email']);
+//             $user->sethomePage($_POST['homepage']);
+//             $user->setMessage($_POST['message']);
+//             $user->setDateAdd(new \DateTime('now'));
+//
+//          if(!$user->getEmail()) {
+//                  $this->entityManager->persist($user);
+//                  $this->entityManager->flush();
+//           }
+//        $person = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
+//        $jsonContent = $serializer->serialize($person, 'json');
+
+        return $this->render($this->render('/guestbook/_tableguest.html.twig', [
+            'appointments' => $this->usersRepo->findAll(array('dateAdd' => 'DESC')),
+            'c'=> var_dump($request->request->get('add_user')),
+            ]));
       }
     /**
      * @Route("delete/{id}", name="user_delete")
      */
-    public function userDelete(UsersW $usersW, EntityManagerInterface $entityManager)
+    public function userDelete(UsersW $usersW)
     {
-        $entityManager->remove($usersW);
-        $entityManager->flush();
+        $this->entityManager->remove($usersW);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('default');
     }
@@ -83,7 +105,7 @@ class UsersWController extends AbstractController
     /**
      * @Route("edit/{id}", name="user_edit")
      */
-    public function userEdit(UsersW $usersW, UsersWRepository $repository, Request $request, EntityManagerInterface $entityManager)
+    public function userEdit(UsersW $usersW, UsersWRepository $repository, Request $request)
     {
         $form1 = $this->createFormBuilder( $usersW)
 
@@ -95,9 +117,9 @@ class UsersWController extends AbstractController
         $form1->handleRequest($request);
 
         if ($form1->isSubmitted() && $form1->isValid()) {
-            if($repository->addNewField($usersW->getEmail())) {
-                $entityManager->persist($usersW);
-                $entityManager->flush();
+            if($usersW->getEmail()) {
+                $this->entityManager->persist($usersW);
+                $this->entityManager->flush();
                 return $this->redirectToRoute('default');
             }
             else {
