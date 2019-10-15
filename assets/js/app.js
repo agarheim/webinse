@@ -14,6 +14,6 @@ require('../css/app.css');
 // const $ = require('jquery');
 // require('../js/bibliotec/jquery-3.4.1.js');
 // require('../js/bibliotec/jquery.dataTables.min');
-//require('../../public/js/users.js');
+require('./users.js');
 
 console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
