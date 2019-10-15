@@ -38,15 +38,15 @@ class UsersWRepository extends ServiceEntityRepository
     }
     */
 
-//    public function addNewField($value): ?UsersW
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.email = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function addNewField($value): ?UsersW
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.email = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 
     public function paginator(EntityManagerInterface $entityManager)
     {

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -64,35 +65,51 @@ class UsersWController extends AbstractController
          return $this->render('/guestbook/index.html.twig', [
             'form' => $form->createView(),
             'appointments' => $chat,
+             'c' => '',
         ]);
     }
 
     /**
      * @Route("addpost", name="add_post")
+     * @param Request $request
+     * @return Response
      */
     public function add_post(Request $request)
       {
             $user = new UsersW();
-          var_dump($request->get('request'));
 
+             $user->setFirstName(htmlspecialchars($request->request->get('add_user')['firstName']));
+             $user->setEmail(htmlspecialchars($request->request->get('add_user')['email']));
+             $user->sethomePage(htmlspecialchars($request->request->get('add_user')['homePage']));
+             $user->setMessage(htmlspecialchars($request->request->get('add_user')['message']));
+             $user->setDateAdd(new \DateTime('now'));
 
-//             $user->setFirstName($_POST['firstName']);
-//             $user->setEmail($_POST['email']);
-//             $user->sethomePage($_POST['homepage']);
-//             $user->setMessage($_POST['message']);
-//             $user->setDateAdd(new \DateTime('now'));
-//
-//          if(!$user->getEmail()) {
-//                  $this->entityManager->persist($user);
-//                  $this->entityManager->flush();
-//           }
+          if(!$this->usersRepo->addNewField($user->getEmail())) {
+                  $this->entityManager->persist($user);
+                  $this->entityManager->flush();
+              $chatF= new UsersW();
+              $form= $this->createForm(AddUserType::class,$chatF,[
+                  'attr' => [
+                      'method' => 'post',
+                      'name' => 'addpost',
+                      'id' => 'formaddpost',
+                      'enctype'=> 'multipart/form-data',
+
+                  ]
+              ]);
+              $form->add('save', SubmitType::class, ['label' => 'Add']);
+              return $this->render('/guestbook/_form.html.twig', [
+                  'form' => $form->createView(),
+                  'c' => 'User add message!'
+              ]);
+           }
+          else{
+              $error='User register our system';
+          }
 //        $person = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
 //        $jsonContent = $serializer->serialize($person, 'json');
+          return new Response($error);
 
-        return $this->render($this->render('/guestbook/_tableguest.html.twig', [
-            'appointments' => $this->usersRepo->findAll(array('dateAdd' => 'DESC')),
-            'c'=>var_dump($request->query->get('firstName')),
-            ]));
       }
     /**
      * @Route("delete/{id}", name="user_delete")

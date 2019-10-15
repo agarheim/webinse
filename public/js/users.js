@@ -34,48 +34,6 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
     document.getElementById("myModal").style.display = "block";
     });
 
-
-//     $("#add_user_save").click(function() {
-//
-//          $.ajax({
-//             // type: 'POST',
-//            //  url: "addpost",
-//              data: $('#addpost').serialize(),
-//              success: function (response) {
-//                  alert("Submitted comment");
-//                  $("#commentList").append("Name:" + $("#add_user_firstName").val() + "<br/>email:" + $("#add_user_Email").val());
-//              },
-//              error: function () {
-//                  //$("#commentList").append($("#name").val() + "<br/>" + $("#body").val());
-//                  alert("There was an error submitting comment");
-//              }
-//          });
-//     });
-
-    //$("#formaddpost").on('submit', (event) => {
-    //   event.preventDefault();
-
-
-       //  let formData = new FormData(document.forms.add_user);
-     //   let data = new FormData(document.querySelector("add_user"));
-
-         // let xhr = new XMLHttpRequest();
-         // xhr.open('POST', 'addpost', ['async']);
-         // xhr.send(['data','dsfasdfasdf']);
-    //        fetch('addpost', {
-    //            method: 'post',
-     //           body: data ,
-     //           headers: {
-    //                'Content-Type': 'application/form-data;charset=utf-8'
-    //            }
-   //         })
-   //             .then((response) => {
-    //                return response.text();
-     //           })
-    //           .then((body) => {
-    //                document.getElementById('commentList').innerHTML = body;//JSON.stringify(body);
-     //          })
-     // });
     $("#formaddpost").submit(function(event){
         event.preventDefault(); //prevent default action
         var post_url = 'addpost'; //get form action url
@@ -91,7 +49,6 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
         });
     });
  });
-
 
 
 function tab() {
@@ -117,32 +74,3 @@ function tab() {
     );
 };
 
-// function ajaxSuccess () {
-//     console.log(this.responseText);
-// }
-//
-// function AJAXSubmit (oFormElement) {
-//     if (!oFormElement.action) { return; }
-//     var oReq = new XMLHttpRequest();
-//     oReq.onload = ajaxSuccess;
-//     if (oFormElement.method.toLowerCase() === "post") {
-//         oReq.open("post", oFormElement.action);
-//         oReq.send(new FormData(oFormElement));
-//     } else {
-//         var oField, sFieldType, nFile, sSearch = "";
-//         for (var nItem = 0; nItem < oFormElement.elements.length; nItem++) {
-//             oField = oFormElement.elements[nItem];
-//             if (!oField.hasAttribute("name")) { continue; }
-//             sFieldType = oField.nodeName.toUpperCase() === "INPUT" ?
-//                 oField.getAttribute("type").toUpperCase() : "TEXT";
-//             if (sFieldType === "FILE") {
-//                 for (nFile = 0; nFile < oField.files.length;
-//                      sSearch += "&" + escape(oField.name) + "=" + escape(oField.files[nFile++].name));
-//             } else if ((sFieldType !== "RADIO" && sFieldType !== "CHECKBOX") || oField.checked) {
-//                 sSearch += "&" + escape(oField.name) + "=" + escape(oField.value);
-//             }
-//         }
-//         oReq.open("get", oFormElement.action.replace(/(?:\?.*)?$/, sSearch.replace(/^&/, "?")), true);
-//         oReq.send(null);
-//     }
-// }
