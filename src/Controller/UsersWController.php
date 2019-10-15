@@ -8,55 +8,99 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 class UsersWController extends AbstractController
 {
     /**
-     * @Route("/", name="default")
-     * @param UsersWRepository $repository
-     * @param Request $request
-     * @param EntityManagerInterface $entityManager
-     * @return RedirectResponse|Response
+     * @var EntityManagerInterface
      */
-    public function index(UsersWRepository $repository, Request $request, EntityManagerInterface $entityManager)
+    private $entityManager;
+
+    /**
+     * @var UsersWRepository
+     */
+    private $usersRepo;
+
+
+    public function __construct(
+        EntityManagerInterface $entityManager, UsersWRepository $repository
+    ) {
+        $this->entityManager = $entityManager;
+        $this->usersRepo = $repository;
+    }
+
+    /**
+     * @Route("/", name="default")
+     * @param Request $request
+     */
+    public function index(Request $request)
     {
         $chatF= new UsersW();
+        $form= $this->createForm(AddUserType::class,$chatF,[
+                                                     'attr' => [
+                                                         'method' => 'post',
+                                                         'name' => 'addpost',
+                                                         'id' => 'formaddpost',
+                                                         'enctype'=> 'multipart/form-data',
 
-        $form11= $this->createForm(AddUserType::class,$chatF);
-        $form11->add('save', SubmitType::class, ['label' => 'Add']);
-        $form11->handleRequest($request);
+                                                     ]
+        ]);
+        $form->add('save', SubmitType::class, ['label' => 'Add']);
+        $form-> handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+           {
+               $chatF->setDateAdd (new \DateTime('now'));
+              if(!$chatF->getEmail()) {
+                  $this->entityManager->persist($chatF);
+                  $this->entityManager->flush();
+                  return $this->redirectToRoute('default');
+              }
+           }
 
-        if ($form11->isSubmitted() && $form11->isValid()) {
-            if(!$repository->addNewField($chatF->getEmail())) {
-                $this->addFlash(
-                    'notice',
-                    'Your changes were saved!'
-                );
-                $entityManager->persist($chatF);
-                $entityManager->flush();
-                return $this->redirectToRoute('default');
-            }
-
-        }
-        $chat = $repository->findAll();
-        return $this->render('/guestbook/index.html.twig', [
-            'chat' => $chat,
-            'form11' => $form11->createView(),
-            'error' => '',
+        $chat = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
+         return $this->render('/guestbook/index.html.twig', [
+            'form' => $form->createView(),
+            'appointments' => $chat,
         ]);
     }
 
     /**
+     * @Route("addpost", name="add_post")
+     */
+    public function add_post(Request $request)
+      {
+            $user = new UsersW();
+          var_dump($request->get('request'));
+
+
+//             $user->setFirstName($_POST['firstName']);
+//             $user->setEmail($_POST['email']);
+//             $user->sethomePage($_POST['homepage']);
+//             $user->setMessage($_POST['message']);
+//             $user->setDateAdd(new \DateTime('now'));
+//
+//          if(!$user->getEmail()) {
+//                  $this->entityManager->persist($user);
+//                  $this->entityManager->flush();
+//           }
+//        $person = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
+//        $jsonContent = $serializer->serialize($person, 'json');
+
+        return $this->render($this->render('/guestbook/_tableguest.html.twig', [
+            'appointments' => $this->usersRepo->findAll(array('dateAdd' => 'DESC')),
+            'c'=>var_dump($request->query->get('firstName')),
+            ]));
+      }
+    /**
      * @Route("delete/{id}", name="user_delete")
      */
-    public function userDelete(UsersW $usersW, EntityManagerInterface $entityManager)
+    public function userDelete(UsersW $usersW)
     {
-        $entityManager->remove($usersW);
-        $entityManager->flush();
+        $this->entityManager->remove($usersW);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('default');
     }
@@ -64,7 +108,7 @@ class UsersWController extends AbstractController
     /**
      * @Route("edit/{id}", name="user_edit")
      */
-    public function userEdit(UsersW $usersW, UsersWRepository $repository, Request $request, EntityManagerInterface $entityManager)
+    public function userEdit(UsersW $usersW, UsersWRepository $repository, Request $request)
     {
         $form1 = $this->createFormBuilder( $usersW)
 
@@ -76,9 +120,9 @@ class UsersWController extends AbstractController
         $form1->handleRequest($request);
 
         if ($form1->isSubmitted() && $form1->isValid()) {
-            if($repository->addNewField($usersW->getEmail())) {
-                $entityManager->persist($usersW);
-                $entityManager->flush();
+            if($usersW->getEmail()) {
+                $this->entityManager->persist($usersW);
+                $this->entityManager->flush();
                 return $this->redirectToRoute('default');
             }
             else {

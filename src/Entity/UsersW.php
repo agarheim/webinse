@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UsersWRepository")
@@ -18,18 +19,31 @@ class UsersW
 
     /**
      * @ORM\Column(type="string", length=150)
+     * @Assert\NotBlank
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=150)
      */
-    private $lastName;
+    private $homePage;
 
     /**
      * @ORM\Column(type="string", length=150)
+     * @Assert\NotBlank
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank
+     */
+    private $message;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateAdd;
 
     public function getId(): ?int
     {
@@ -48,14 +62,14 @@ class UsersW
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function gethomePage(): ?string
     {
-        return $this->lastName;
+        return $this->homePage;
     }
 
-    public function setLastName(string $lastName): self
+    public function sethomePage(string $homePage): self
     {
-        $this->lastName = $lastName;
+        $this->homePage = $homePage;
 
         return $this;
     }
@@ -68,6 +82,30 @@ class UsersW
     public function setEmail(string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getDateAdd(): ?\DateTimeInterface
+    {
+        return $this->dateAdd;
+    }
+
+    public function setDateAdd(\DateTimeInterface $dateAdd): self
+    {
+        $this->dateAdd = $dateAdd;
 
         return $this;
     }
