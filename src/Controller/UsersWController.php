@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\UsersW;
@@ -28,12 +29,18 @@ class UsersWController extends AbstractController
      */
     private $usersRepo;
 
+    /**
+     * @var Environment
+     */
+    private $env;
 
     public function __construct(
-        EntityManagerInterface $entityManager, UsersWRepository $repository
-    ) {
+        EntityManagerInterface $entityManager, UsersWRepository $repository, Environment $environment
+    )
+    {
         $this->entityManager = $entityManager;
         $this->usersRepo = $repository;
+        $this->env = $environment;
     }
 
     /**
@@ -41,31 +48,30 @@ class UsersWController extends AbstractController
      */
     public function index(Request $request)
     {
-        $chatF= new UsersW();
-        $form= $this->createForm(AddUserType::class,$chatF,[
-                                                     'attr' => [
-                                                         'method' => 'post',
-                                                         'name' => 'addpost',
-                                                         'id' => 'formaddpost',
-                                                     ]
+        $chatF = new UsersW();
+        $form = $this->createForm(AddUserType::class, $chatF, [
+            'attr' => [
+                'name' => 'addpost',
+                'id' => 'formaddpost',
+            ]
         ]);
         $form->add('save', SubmitType::class, ['label' => 'Add']);
-        $form-> handleRequest($request);
-        if($form->isSubmitted() && $form->isValid())
-           {
-               $chatF->setDateAdd (new \DateTime('now'));
-              if(!$chatF->getEmail()) {
-                  $this->entityManager->persist($chatF);
-                  $this->entityManager->flush();
-                  return $this->redirectToRoute('default');
-              }
-           }
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $chatF->setDateAdd(new \DateTime('now'));
+            if (!$chatF->getEmail()) {
+                $this->entityManager->persist($chatF);
+                $this->entityManager->flush();
+                return $this->redirectToRoute('default');
+            }
+        }
 
-        $chat = $this->usersRepo->findAll();
-         return $this->render('/guestbook/index.html.twig', [
+        $chat = $this->allUser();
+
+        return $this->render('/guestbook/index.html.twig', [
             'form' => $form->createView(),
             'appointments' => $chat,
-             'error' => '',
+            'error' => '',
         ]);
     }
 
@@ -73,68 +79,70 @@ class UsersWController extends AbstractController
      * @Route("addpost", name="add_post")
      */
     public function add_post(Request $request, Environment $environment)
-      {     $dataGET = $request->query->get('add_user');
-            $dataPOST = $request->request->get('add_user');
-            $user = new UsersW();
-            $response = new Response();
-            $response->headers->set('Content-Type', 'application/json');
-           if(isset($dataGET['firstName'])){
-               $data= $dataGET;
-           }
-           elseif (isset($dataPOST['firstName']))
-           {
-               $data= $dataPOST;
-           }
-             $user->setFirstName(htmlspecialchars($data['firstName']));
-             $user->setEmail(htmlspecialchars($data['email']));
-             $user->sethomePage(htmlspecialchars($data['homePage']));
-             $user->setMessage(htmlspecialchars($data['message']));
-             $user->setDateAdd(new \DateTime('now'));
+    {
+        $dataGET = $request->query->get('add_user');
+        $dataPOST = $request->request->get('add_user');
+        $user = new UsersW();
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/json');
+        if (isset($dataGET['firstName'])) {
+            $data = $dataGET;
+        } elseif (isset($dataPOST['firstName'])) {
+            $data = $dataPOST;
+        }
+        $user->setFirstName(htmlspecialchars($data['firstName']));
+        $user->setEmail(htmlspecialchars($data['email']));
+        $user->sethomePage(htmlspecialchars($data['homePage']));
+        $user->setMessage(htmlspecialchars($data['message']));
+        $user->setDateAdd(new \DateTime('now'));
 
-          if(!$this->usersRepo->addNewField($user->getEmail())) {
+        if (!$this->usersRepo->addNewField($user->getEmail())) {
 
-                  $this->entityManager->persist($user);
-                  $this->entityManager->flush();
-              $chatF= new UsersW();
-              $form= $this->createForm(AddUserType::class,$chatF,[
-                  'attr' => [
-                      'method' => 'post',
-                      'name' => 'addpost',
-                      'id' => 'formaddpost',
-                  ]
-              ]);
-              $errstr=1;
-              $error='User add message!';
-              $form->add('save', SubmitType::class, ['label' => 'Add']);
-              try {
-                  $response->setContent(json_encode([
-                      'html' => $environment->render('/guestbook/_form.html.twig', [
-                          'form' => $form->createView(),
-                          'error' => $error,
-                      ]),
-                      'errst' => $errstr]));
-              } catch (LoaderError $e) {
-              } catch (RuntimeError $e) {
-              } catch (SyntaxError $e) {
-              }
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            $chatF = new UsersW();
+            $form = $this->createForm(AddUserType::class, $chatF, [
+                'attr' => [
+                    'name' => 'addpost',
+                    'id' => 'formaddpost',
+                ]
+            ]);
+            $errstr = 1;
+            $error = 'User add message!';
+            $form->add('save', SubmitType::class, ['label' => 'Add']);
+            try {
+                $response->setContent(json_encode([
+                    'html' => $environment->render('/guestbook/_form.html.twig', [
+                        'form' => $form->createView(),
+                        'error' => $error,
+                    ]),
+                    'errst' => $errstr]));
+            } catch (LoaderError $e) {
+            } catch (RuntimeError $e) {
+            } catch (SyntaxError $e) {
+            }
 
-          }
-          else{
-              $error='User register our system';
-              $errstr=0;
+        } else {
+            $error = 'User register our system';
+            $errstr = 0;
 
-              $response->setContent(json_encode([
-                  'errst' => $errstr,
-                  'error' => $error
-              ]));
+            $response->setContent(json_encode([
+                'errst' => $errstr,
+                'error' => $error
+            ]));
 
-          }
-//        $person = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
-//        $jsonContent = $serializer->serialize($person, 'json');
+        }
+        return $response;
+    }
 
-          return $response;
-
-      }
+    /**
+     * @Route("alluser", name="all_user")
+     */
+    public function allUser()
+    {
+      return $this->env->render('/guestbook/_tableguest.html.twig', [
+         'appointments' =>$this->usersRepo->findAll(),]);
+    }
     /**
      * @Route("delete/{id}", name="user_delete")
      */
@@ -151,8 +159,7 @@ class UsersWController extends AbstractController
      */
     public function userEdit(UsersW $usersW, UsersWRepository $repository, Request $request)
     {
-        $form1 = $this->createFormBuilder( $usersW)
-
+        $form1 = $this->createFormBuilder($usersW)
             ->add('firstName', TextType::class)
             ->add('lastName', TextType::class)
             ->add('email', TextType::class)
@@ -161,12 +168,11 @@ class UsersWController extends AbstractController
         $form1->handleRequest($request);
 
         if ($form1->isSubmitted() && $form1->isValid()) {
-            if($usersW->getEmail()) {
+            if ($usersW->getEmail()) {
                 $this->entityManager->persist($usersW);
                 $this->entityManager->flush();
                 return $this->redirectToRoute('default');
-            }
-            else {
+            } else {
                 return $this->redirectToRoute('default');
             }
         }

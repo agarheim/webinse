@@ -37,12 +37,12 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
     $("#formaddpost").submit(function(event){
         event.preventDefault(); //prevent default action
         let post_url = 'addpost'; //get form action url
-        let request_method = $(this).attr("POST"); //get form GET/POST method
+        let request_method = "POST"; //get form GET/POST method
         let form_data = $(this).serialize(); //Encode form elements for submission
 
         $.ajax({
             url : post_url,
-            type: request_method,
+            type: "post",
             data : form_data
         }).done(function(response){ //
             if(response['errst']===0){
@@ -77,7 +77,9 @@ function tab() {
                     "searchable": false
                 }
             ],
+
         },
+
     );
 };
 
