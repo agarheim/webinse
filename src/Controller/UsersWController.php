@@ -11,7 +11,10 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class UsersWController extends AbstractController
 {
@@ -35,7 +38,6 @@ class UsersWController extends AbstractController
 
     /**
      * @Route("/", name="default")
-     * @param Request $request
      */
     public function index(Request $request)
     {
@@ -45,8 +47,6 @@ class UsersWController extends AbstractController
                                                          'method' => 'post',
                                                          'name' => 'addpost',
                                                          'id' => 'formaddpost',
-                                                         'enctype'=> 'multipart/form-data',
-
                                                      ]
         ]);
         $form->add('save', SubmitType::class, ['label' => 'Add']);
@@ -61,30 +61,38 @@ class UsersWController extends AbstractController
               }
            }
 
-        $chat = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
+        $chat = $this->usersRepo->findAll();
          return $this->render('/guestbook/index.html.twig', [
             'form' => $form->createView(),
             'appointments' => $chat,
-             'c' => '',
+             'error' => '',
         ]);
     }
 
     /**
      * @Route("addpost", name="add_post")
-     * @param Request $request
-     * @return Response
      */
-    public function add_post(Request $request)
-      {
+    public function add_post(Request $request, Environment $environment)
+      {     $dataGET = $request->query->get('add_user');
+            $dataPOST = $request->request->get('add_user');
             $user = new UsersW();
-
-             $user->setFirstName(htmlspecialchars($request->request->get('add_user')['firstName']));
-             $user->setEmail(htmlspecialchars($request->request->get('add_user')['email']));
-             $user->sethomePage(htmlspecialchars($request->request->get('add_user')['homePage']));
-             $user->setMessage(htmlspecialchars($request->request->get('add_user')['message']));
+            $response = new Response();
+            $response->headers->set('Content-Type', 'application/json');
+           if(isset($dataGET['firstName'])){
+               $data= $dataGET;
+           }
+           elseif (isset($dataPOST['firstName']))
+           {
+               $data= $dataPOST;
+           }
+             $user->setFirstName(htmlspecialchars($data['firstName']));
+             $user->setEmail(htmlspecialchars($data['email']));
+             $user->sethomePage(htmlspecialchars($data['homePage']));
+             $user->setMessage(htmlspecialchars($data['message']));
              $user->setDateAdd(new \DateTime('now'));
 
           if(!$this->usersRepo->addNewField($user->getEmail())) {
+
                   $this->entityManager->persist($user);
                   $this->entityManager->flush();
               $chatF= new UsersW();
@@ -93,22 +101,38 @@ class UsersWController extends AbstractController
                       'method' => 'post',
                       'name' => 'addpost',
                       'id' => 'formaddpost',
-                      'enctype'=> 'multipart/form-data',
-
                   ]
               ]);
+              $errstr=1;
+              $error='User add message!';
               $form->add('save', SubmitType::class, ['label' => 'Add']);
-              return $this->render('/guestbook/_form.html.twig', [
-                  'form' => $form->createView(),
-                  'c' => 'User add message!'
-              ]);
-           }
+              try {
+                  $response->setContent(json_encode([
+                      'html' => $environment->render('/guestbook/_form.html.twig', [
+                          'form' => $form->createView(),
+                          'error' => $error,
+                      ]),
+                      'errst' => $errstr]));
+              } catch (LoaderError $e) {
+              } catch (RuntimeError $e) {
+              } catch (SyntaxError $e) {
+              }
+
+          }
           else{
               $error='User register our system';
+              $errstr=0;
+
+              $response->setContent(json_encode([
+                  'errst' => $errstr,
+                  'error' => $error
+              ]));
+
           }
 //        $person = $this->usersRepo->findAll(array('dateAdd' => 'DESC'));
 //        $jsonContent = $serializer->serialize($person, 'json');
-          return new Response($error);
+
+          return $response;
 
       }
     /**

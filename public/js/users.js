@@ -36,16 +36,23 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
 
     $("#formaddpost").submit(function(event){
         event.preventDefault(); //prevent default action
-        var post_url = 'addpost'; //get form action url
-        var request_method = $(this).attr("method"); //get form GET/POST method
-        var form_data = $(this).serialize(); //Encode form elements for submission
+        let post_url = 'addpost'; //get form action url
+        let request_method = $(this).attr("POST"); //get form GET/POST method
+        let form_data = $(this).serialize(); //Encode form elements for submission
 
         $.ajax({
             url : post_url,
             type: request_method,
             data : form_data
         }).done(function(response){ //
-            $("#commentList").html(response);
+            if(response['errst']===0){
+                $("#commentList").html(response['error']);
+            }
+            else if (response['errst']===1) {
+                alert('yeah!!');
+                $("#showForm").html(response['html']);
+            }
+
         });
     });
  });
@@ -53,7 +60,7 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
 
 function tab() {
   $('#guestbook').DataTable(
-        { "scrollY": "220px",
+        { "scrollY": "350px",
             "pageLength": 5,
             "lengthMenu": [ 5, 25, 50, 75, 100 ],
             "searching": false,
