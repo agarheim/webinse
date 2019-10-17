@@ -49,8 +49,9 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
                 $("#commentList").html(response['error']);
             }
             else if (response['errst']===1) {
-                alert('yeah!!');
                 $("#showForm").html(response['html']);
+                $("#showTable").html(response['tables']);
+                tab();
             }
 
         });

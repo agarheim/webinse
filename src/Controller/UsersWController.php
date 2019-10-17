@@ -110,12 +110,15 @@ class UsersWController extends AbstractController
             $errstr = 1;
             $error = 'User add message!';
             $form->add('save', SubmitType::class, ['label' => 'Add']);
+            $chat = $this->allUser();
             try {
                 $response->setContent(json_encode([
                     'html' => $environment->render('/guestbook/_form.html.twig', [
                         'form' => $form->createView(),
                         'error' => $error,
+
                     ]),
+                    'tables' =>  $chat,
                     'errst' => $errstr]));
             } catch (LoaderError $e) {
             } catch (RuntimeError $e) {
