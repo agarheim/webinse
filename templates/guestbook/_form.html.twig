@@ -1,8 +1,12 @@
 <div id="commentList">{{ error }}</div>
 <p id="formWiew">{{ form_start(form) }}
 {{ form_widget(form) }}
-    <input type="file" multiple="multiple" accept="image/jpeg,image/png,image/gif">
-    {#    <a href="#" class="upload_files button">Загрузить файлы</a>#}
+    <br/><br/>
+    <img id="preview" src="{{ asset('upload/users/no_image_jpg.jpeg') }}" width="350px" height="320px"/><br/>
+    <input type="file" id="image" style="display: none;"/>
+    <!--<input type="hidden" style="display: none" value="0" name="remove" id="remove">-->
+    <a id="changeImg" href="#changeImg1">Change</a> |
+    <a style="color: red" href="javascript:removeImage()">Remove</a>
 
 {{ form_end(form) }}
 

@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ImageUserRepository")
+ * @Vich\Uploadable()
  */
 class ImageUser
 {
@@ -26,6 +28,23 @@ class ImageUser
      * @ORM\JoinColumn(nullable=false)
      */
     private $idUser;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $mimeType;
+
+    /**
+     * @var File
+     *
+     * @Vich\UploadableField(mapping="users", fileNameProperty="imageName", originalName="originalName", mimeType="mimeType")
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $originalName;
 
     public function getId(): ?int
     {
@@ -52,6 +71,30 @@ class ImageUser
     public function setIdUser(UsersW $idUser): self
     {
         $this->idUser = $idUser;
+
+        return $this;
+    }
+
+    public function getMimeType(): ?string
+    {
+        return $this->mimeType;
+    }
+
+    public function setMimeType(string $mimeType): self
+    {
+        $this->mimeType = $mimeType;
+
+        return $this;
+    }
+
+    public function getOriginalName(): ?string
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName(string $originalName): self
+    {
+        $this->originalName = $originalName;
 
         return $this;
     }

@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\UsersW;
 use App\Form\AddUserType;
+use App\Form\UserImageType;
 use App\Repository\UsersWRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

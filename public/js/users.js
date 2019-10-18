@@ -1,9 +1,9 @@
 'use strict';
 
-let modal, mess;
+let modal, mess, files;
 //  // Get the modal
  modal=document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
+let span = document.getElementsByClassName("close")[0];
 //
 // // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
@@ -12,14 +12,38 @@ span.onclick = function() {
 //
 // // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == modal) {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
 }
 
 $(document).ready(function() {
   tab();
-
+    $('#changeImg').click(function(){
+        $('#image').click();
+    });
+    $('#image').change(function () {
+        let imgPath = this.value;
+        let ext = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+        if (ext === "gif" || ext === "png" || ext === "jpg" || ext === "jpeg")
+            readURL(this);
+        else
+            alert("Please select image file (jpg, jpeg, png).")
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = function (e) {
+                $('#preview').attr('src', e.target.result);
+//              $("#remove").val(0);
+            };
+        }
+    }
+    function removeImage() {
+        $('#preview').attr('src', './public/upload/users/noimage.jpg');
+//      $("#remove").val(1);
+    }
 $ ('#guestbook'). on ('click', 'tbody tr', function () {
         let table = $ ('#guestbook'). DataTable ();
         let tr = $ ( this) .closest ('tr');
