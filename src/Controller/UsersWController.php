@@ -73,7 +73,7 @@ class UsersWController extends AbstractController
     public function add_post(Request $request)
       {
             $user = new UsersW();
-          var_dump($request->get('request'));
+          var_dump($request->attributes->keys('request'));
 
 
 //             $user->setFirstName($_POST['firstName']);
