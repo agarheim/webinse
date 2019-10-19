@@ -41,9 +41,14 @@ class UsersW
     private $message;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $dateAdd;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\ImageUser", mappedBy="idUser", cascade={"persist", "remove"})
+     */
+    private $imageUser;
 
     public function getId(): ?int
     {
@@ -106,6 +111,23 @@ class UsersW
     public function setDateAdd(\DateTimeInterface $dateAdd): self
     {
         $this->dateAdd = $dateAdd;
+
+        return $this;
+    }
+
+    public function getImageUser(): ?ImageUser
+    {
+        return $this->imageUser;
+    }
+
+    public function setImageUser(ImageUser $imageUser): self
+    {
+        $this->imageUser = $imageUser;
+
+        // set the owning side of the relation if necessary
+        if ($this !== $imageUser->getIdUser()) {
+            $imageUser->setIdUser($this);
+        }
 
         return $this;
     }

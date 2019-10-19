@@ -1,11 +1,23 @@
-<table>
-{% for chats in appointments %}
-    <tr >
-        <td>{{ chats.firstName}}</td>
-        <td>{{ chats.homePage }}</td>
-        <td>{{ chats.email }}</td>
+<table  id="guestbook" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+    <tr>
+        <th>FirstName</th>
+        <th>homePage</th>
+        <th>Email</th>
+        <th>Date</th>
+        <th>Text</th>
     </tr>
+    </thead>
+    <tbody >
+{% for chats in appointments %}
+<tr id="js-user-edit-tr">
+    <td>{{ chats.firstName}}</td>
+    <td>{{ chats.homePage }}</td>
+    <td>{{ chats.email }}</td>
+    <td>{{ chats.dateAdd|date("m/d/Y H:i:s") }}</td>
+    <td>{{ chats.message  }}</td>
+</tr>
 {% endfor %}
-    {{ c }}
+    </tbody>
 </table>
 

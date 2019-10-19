@@ -1,9 +1,9 @@
 'use strict';
 
-let modal, mess;
+let modal, mess, files;
 //  // Get the modal
  modal=document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
+let span = document.getElementsByClassName("close")[0];
 //
 // // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
@@ -12,14 +12,38 @@ span.onclick = function() {
 //
 // // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
-    if (event.target == modal) {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
 }
 
 $(document).ready(function() {
   tab();
-
+    $('#changeImg').click(function(){
+        $('#image').click();
+    });
+    $('#image').change(function () {
+        let imgPath = this.value;
+        let ext = imgPath.substring(imgPath.lastIndexOf('.') + 1).toLowerCase();
+        if (ext === "gif" || ext === "png" || ext === "jpg" || ext === "jpeg")
+            readURL(this);
+        else
+            alert("Please select image file (jpg, jpeg, png).")
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.readAsDataURL(input.files[0]);
+            reader.onload = function (e) {
+                $('#preview').attr('src', e.target.result);
+//              $("#remove").val(0);
+            };
+        }
+    }
+    function removeImage() {
+        $('#preview').attr('src', './public/upload/users/noimage.jpg');
+//      $("#remove").val(1);
+    }
 $ ('#guestbook'). on ('click', 'tbody tr', function () {
         let table = $ ('#guestbook'). DataTable ();
         let tr = $ ( this) .closest ('tr');
@@ -34,69 +58,34 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
     document.getElementById("myModal").style.display = "block";
     });
 
-
-//     $("#add_user_save").click(function() {
-//
-//          $.ajax({
-//             // type: 'POST',
-//            //  url: "addpost",
-//              data: $('#addpost').serialize(),
-//              success: function (response) {
-//                  alert("Submitted comment");
-//                  $("#commentList").append("Name:" + $("#add_user_firstName").val() + "<br/>email:" + $("#add_user_Email").val());
-//              },
-//              error: function () {
-//                  //$("#commentList").append($("#name").val() + "<br/>" + $("#body").val());
-//                  alert("There was an error submitting comment");
-//              }
-//          });
-//     });
-
-    //$("#formaddpost").on('submit', (event) => {
-    //   event.preventDefault();
-
-
-       //  let formData = new FormData(document.forms.add_user);
-     //   let data = new FormData(document.querySelector("add_user"));
-
-         // let xhr = new XMLHttpRequest();
-         // xhr.open('POST', 'addpost', ['async']);
-         // xhr.send(['data','dsfasdfasdf']);
-    //        fetch('addpost', {
-    //            method: 'post',
-     //           body: data ,
-     //           headers: {
-    //                'Content-Type': 'application/form-data;charset=utf-8'
-    //            }
-   //         })
-   //             .then((response) => {
-    //                return response.text();
-     //           })
-    //           .then((body) => {
-    //                document.getElementById('commentList').innerHTML = body;//JSON.stringify(body);
-     //          })
-     // });
     $("#formaddpost").submit(function(event){
         event.preventDefault(); //prevent default action
-        var post_url = 'addpost'; //get form action url
-        var request_method = $(this).attr("method"); //get form GET/POST method
-        var form_data = $(this).serialize(); //Encode form elements for submission
+        let post_url = 'addpost'; //get form action url
+        let request_method = "POST"; //get form GET/POST method
+        let form_data = $(this).serialize(); //Encode form elements for submission
 
         $.ajax({
             url : post_url,
-            type: request_method,
+            type: "post",
             data : form_data
         }).done(function(response){ //
-            $("#commentList").html(response);
+            if(response['errst']===0){
+                $("#commentList").html(response['error']);
+            }
+            else if (response['errst']===1) {
+                $("#showForm").html(response['html']);
+                $("#showTable").html(response['tables']);
+                tab();
+            }
+
         });
     });
  });
 
 
-
 function tab() {
   $('#guestbook').DataTable(
-        { "scrollY": "220px",
+        { "scrollY": "350px",
             "pageLength": 5,
             "lengthMenu": [ 5, 25, 50, 75, 100 ],
             "searching": false,
@@ -113,36 +102,9 @@ function tab() {
                     "searchable": false
                 }
             ],
+
         },
+
     );
 };
 
-// function ajaxSuccess () {
-//     console.log(this.responseText);
-// }
-//
-// function AJAXSubmit (oFormElement) {
-//     if (!oFormElement.action) { return; }
-//     var oReq = new XMLHttpRequest();
-//     oReq.onload = ajaxSuccess;
-//     if (oFormElement.method.toLowerCase() === "post") {
-//         oReq.open("post", oFormElement.action);
-//         oReq.send(new FormData(oFormElement));
-//     } else {
-//         var oField, sFieldType, nFile, sSearch = "";
-//         for (var nItem = 0; nItem < oFormElement.elements.length; nItem++) {
-//             oField = oFormElement.elements[nItem];
-//             if (!oField.hasAttribute("name")) { continue; }
-//             sFieldType = oField.nodeName.toUpperCase() === "INPUT" ?
-//                 oField.getAttribute("type").toUpperCase() : "TEXT";
-//             if (sFieldType === "FILE") {
-//                 for (nFile = 0; nFile < oField.files.length;
-//                      sSearch += "&" + escape(oField.name) + "=" + escape(oField.files[nFile++].name));
-//             } else if ((sFieldType !== "RADIO" && sFieldType !== "CHECKBOX") || oField.checked) {
-//                 sSearch += "&" + escape(oField.name) + "=" + escape(oField.value);
-//             }
-//         }
-//         oReq.open("get", oFormElement.action.replace(/(?:\?.*)?$/, sSearch.replace(/^&/, "?")), true);
-//         oReq.send(null);
-//     }
-// }

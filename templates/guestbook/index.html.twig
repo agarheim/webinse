@@ -7,47 +7,20 @@
       <div class="row">
           <!-- The Modal -->
           <div id="myModal" class="modal">
-              <span class="close">&times;</span>
               <!-- Modal content -->
+              <span class="close">&times;</span>
               <div id="modal-content" class="modal-content">
+
                   <p>Some text in the Modal..</p>
               </div>
 
           </div>
-       <div class="col-sm-4">
-           <div id="commentList"></div>
-        <p>{{ form(form) }}</p>
-
+       <div id="showForm" class="col-sm-4">
+          {{ include('guestbook/_form.html.twig') }}
        </div>
-       <div class="col-sm-8">
-            <table  id="guestbook" class="table table-striped table-bordered" style="width:100%">
-               <thead>
-                 <tr>
-                   <th>FirstName</th>
-                   <th>homePage</th>
-                   <th>Email</th>
-                   <th>Date</th>
-                   <th>Text</th>
-                 </tr>
-               </thead>
-               <tbody >
-                {% for chats in appointments %}
-                    <tr id="js-user-edit-tr">
-                        <td>{{ chats.firstName}}</td>
-                        <td>{{ chats.homePage }}</td>
-                        <td>{{ chats.email }}</td>
-                        <td>{{ chats.dateAdd|date("m/d/Y H:i:s") }}</td>
-                        <td>{{ chats.message }}</td>
-{#                        <td><a href="{{ path('user_edit', {'id': chats.id}) }}" class="btn js-user-edit" >#}
-{#                                <i class="far fa-edit "></i>#}
-{#                            </a></td>#}
-{#                        <td><a href="{{ path('user_delete', {'id': chats.id}) }}" class="btn js-user-remove">#}
-{#                                <i class="fas fa-trash-alt"></i>#}
-{#                            </a></td>#}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+       <div id="showTable" class="col-sm-8">
+           {{ appointments |raw }}
+
             </div>
         </div>
 

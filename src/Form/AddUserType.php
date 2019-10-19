@@ -25,7 +25,7 @@ class AddUserType extends AbstractType
                                                           'pattern'=> 'https?://.+',
                                                           'title' => 'Include http://' ]])
             ->add('email', EmailType::class, ['attr' =>
-                                       ['placeholder' => 'Enter Your Email','pattern' => '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2, 3}$']
+                                       ['placeholder' => 'Enter Your Email']
                       ])
             ->add('message', TextareaType::class)
         ;
