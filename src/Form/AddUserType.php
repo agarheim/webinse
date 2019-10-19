@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\ImageUser;
 use App\Entity\UsersW;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -11,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class AddUserType extends AbstractType
 {
@@ -28,6 +30,7 @@ class AddUserType extends AbstractType
                                        ['placeholder' => 'Enter Your Email']
                       ])
             ->add('message', TextareaType::class)
+
         ;
     }
 

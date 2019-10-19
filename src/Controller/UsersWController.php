@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ImageUser;
 use App\Entity\UsersW;
 use App\Form\AddUserType;
 use App\Form\UserImageType;
@@ -58,6 +59,7 @@ class UsersWController extends AbstractController
                 'id' => 'formaddpost',
             ]
         ]);
+
         $form->add('save', SubmitType::class, ['label' => 'Add']);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

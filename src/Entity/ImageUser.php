@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ImageUserRepository")
  * @Vich\Uploadable()
@@ -45,6 +47,8 @@ class ImageUser
      * @ORM\Column(type="string", length=255)
      */
     private $originalName;
+
+
 
     public function getId(): ?int
     {

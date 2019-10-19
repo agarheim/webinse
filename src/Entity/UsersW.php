@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -10,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class UsersW
 {
+
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -50,6 +53,10 @@ class UsersW
      */
     private $imageUser;
 
+//    public function __construct()
+//    {
+//        $this->imageUser = new ArrayCollection();
+//    }
     public function getId(): ?int
     {
         return $this->id;
@@ -115,12 +122,15 @@ class UsersW
         return $this;
     }
 
+    /**
+     * @return ImageUser|null
+     */
     public function getImageUser(): ?ImageUser
     {
         return $this->imageUser;
     }
 
-    public function setImageUser(ImageUser $imageUser): self
+    public function setImageUser(ImageUser $imageUser)//: self
     {
         $this->imageUser = $imageUser;
 

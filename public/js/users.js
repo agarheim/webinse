@@ -40,10 +40,10 @@ $(document).ready(function() {
             };
         }
     }
-    function removeImage() {
-        $('#preview').attr('src', './public/upload/users/noimage.jpg');
+    $('#removeImg').click(function(){
+        $('#preview').attr('src', '/upload/users/no_image_jpg.jpeg');
 //      $("#remove").val(1);
-    }
+    });
 $ ('#guestbook'). on ('click', 'tbody tr', function () {
         let table = $ ('#guestbook'). DataTable ();
         let tr = $ ( this) .closest ('tr');
