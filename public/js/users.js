@@ -67,7 +67,7 @@ $ ('#guestbook'). on ('click', 'tbody tr', function () {
         $.ajax({
             url : post_url,
             type: "post",
-            data : form_data
+            data : {"add_user" : form_data,}
         }).done(function(response){ //
             if(response['errst']===0){
                 $("#commentList").html(response['error']);
